@@ -1,7 +1,4 @@
 import axios from "axios";
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 const WEB_HOOK_ERROR_MONITORING = process.env.WEB_HOOK_ERROR_MONITORING;
 const GITHUB_API_URI = 'https://api.github.com';
@@ -10,10 +7,24 @@ const GITHUB_REPO = process.env.GITHUB_REPO;
 
 const members = [process.env.MEMBER1, process.env.MEMBER2, process.env.MEMBER3];
 
+const getPRList = async () => {
+    const prUrl = `${GITHUB_API_URI}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/pulls?state=open`;
+
+    try {
+        const response = await axios.get(prUrl);
+
+        return response.data;
+    } catch (error) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify(error),
+        }
+    }
+}
+
 export const handler = async (event) => {
     try {
-        const prUrl = `${GITHUB_API_URI}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/pulls?state=open`;
-        const response = await axios.get(prUrl);
+        const prList = await getPRList();
 
         let mentionMessage = ``;
 
@@ -39,8 +50,7 @@ export const handler = async (event) => {
             },
         ];
 
-        response.data.forEach(obj => {
-            console.log(obj);
+        prList.forEach(obj => {
             const section = {
                 type: "section",
                 text: {
