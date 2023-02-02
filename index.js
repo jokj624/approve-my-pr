@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const WEB_HOOK_ERROR_MONITORING = process.env.WEB_HOOK_ERROR_MONITORING;
+const WEB_HOOK_URL = process.env.WEB_HOOK_URL;
 const GITHUB_API_URI = 'https://api.github.com';
 const GITHUB_OWNER = process.env.GITHUB_OWNER;
 const GITHUB_REPO = process.env.GITHUB_REPO;
@@ -71,7 +71,7 @@ export const handler = async (event) => {
             "alt_text": "inspiration"
         });
 
-        await axios.post(WEB_HOOK_ERROR_MONITORING, { blocks });
+        await axios.post(WEB_HOOK_URL, { blocks });
 
         return {
             statusCode: 200,
